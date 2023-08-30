@@ -30,9 +30,9 @@ defmodule Benchee.RelativeStatistics do
     %Suite{suite | scenarios: scenarios}
   end
 
-  defp calculate_relative_statistics([], _inputs), do: []
+  def calculate_relative_statistics([], _inputs), do: []
 
-  defp calculate_relative_statistics(scenarios, inputs) do
+  def calculate_relative_statistics(scenarios, inputs) do
     scenarios
     |> scenarios_by_input(inputs)
     |> Enum.flat_map(fn scenarios_with_same_input ->
@@ -43,18 +43,18 @@ defmodule Benchee.RelativeStatistics do
   end
 
   @spec sort([Scenario.t()]) :: [Scenario.t()]
-  defp sort(scenarios) do
+  def sort(scenarios) do
     Enum.sort_by(scenarios, fn scenario ->
       {scenario.run_time_data.statistics.average, scenario.memory_usage_data.statistics.average,
        scenario.reductions_data.statistics.average}
     end)
   end
 
-  defp scenarios_by_input(scenarios, nil), do: [scenarios]
+  def scenarios_by_input(scenarios, nil), do: [scenarios]
 
   # we can't just group_by `input_name` because that'd lose the order of inputs which might
   # be important
-  defp scenarios_by_input(scenarios, inputs) do
+  def scenarios_by_input(scenarios, inputs) do
     Enum.map(inputs, fn {input_name, _} ->
       Enum.filter(scenarios, fn scenario -> scenario.input_name == input_name end)
     end)
@@ -62,12 +62,12 @@ defmodule Benchee.RelativeStatistics do
 
   # right now we take the first scenario as we sorted them and it is the fastest,
   # whenever we implement #179 though this becomes more involved
-  defp split_reference_scenario(scenarios) do
+  def split_reference_scenario(scenarios) do
     [reference | others] = scenarios
     {reference, others}
   end
 
-  defp statistics_relative_to(scenarios, reference) do
+  def statistics_relative_to(scenarios, reference) do
     Enum.map(scenarios, fn scenario ->
       scenario
       |> update_in([Access.key!(:run_time_data), Access.key!(:statistics)], fn statistics ->
@@ -83,10 +83,10 @@ defmodule Benchee.RelativeStatistics do
   end
 
   # we might not run time/memory --> we shouldn't crash then ;)
-  defp add_relative_statistics(statistics = %{average: nil}, _reference), do: statistics
-  defp add_relative_statistics(statistics, %{average: nil}), do: statistics
+  def add_relative_statistics(statistics = %{average: nil}, _reference), do: statistics
+  def add_relative_statistics(statistics, %{average: nil}), do: statistics
 
-  defp add_relative_statistics(statistics, reference_statistics) do
+  def add_relative_statistics(statistics, reference_statistics) do
     %Statistics{
       statistics
       | relative_more: zero_safe_division(statistics.average, reference_statistics.average),
@@ -95,8 +95,8 @@ defmodule Benchee.RelativeStatistics do
     }
   end
 
-  defp zero_safe_division(0.0, 0.0), do: 1.0
-  defp zero_safe_division(_, 0), do: :infinity
-  defp zero_safe_division(_, 0.0), do: :infinity
-  defp zero_safe_division(a, b), do: a / b
+  def zero_safe_division(0.0, 0.0), do: 1.0
+  def zero_safe_division(_, 0), do: :infinity
+  def zero_safe_division(_, 0.0), do: :infinity
+  def zero_safe_division(a, b), do: a / b
 end

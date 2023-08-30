@@ -54,7 +54,7 @@ defmodule Benchee.Benchmark.Runner do
 
   # This will run the given scenario exactly once, including the before and
   # after hooks, to ensure the function can execute without raising an error.
-  defp pre_check(scenario, scenario_context) do
+  def pre_check(scenario, scenario_context) do
     RunOnce.run(scenario, scenario_context, Collect.Time)
   end
 
@@ -64,7 +64,7 @@ defmodule Benchee.Benchmark.Runner do
     overhead
   end
 
-  defp parallel_benchmark(
+  def parallel_benchmark(
          scenario = %Scenario{job_name: job_name, input_name: input_name},
          scenario_context = %ScenarioContext{
            printer: printer,
@@ -78,11 +78,11 @@ defmodule Benchee.Benchmark.Runner do
     |> add_measurements_to_scenario(scenario)
   end
 
-  defp measure_scenario_parallel(config, scenario, scenario_context) do
+  def measure_scenario_parallel(config, scenario, scenario_context) do
     Parallel.map(1..config.parallel, fn _ -> measure_scenario(scenario, scenario_context) end)
   end
 
-  defp add_measurements_to_scenario(measurements, scenario) do
+  def add_measurements_to_scenario(measurements, scenario) do
     run_times = Enum.flat_map(measurements, fn {run_times, _, _} -> run_times end)
     memory_usages = Enum.flat_map(measurements, fn {_, memory_usages, _} -> memory_usages end)
     reductions = Enum.flat_map(measurements, fn {_, _, reductions} -> reductions end)
@@ -96,7 +96,7 @@ defmodule Benchee.Benchmark.Runner do
   end
 
   @spec measure_scenario(Scenario.t(), ScenarioContext.t()) :: {[number], [number], [number]}
-  defp measure_scenario(scenario, scenario_context) do
+  def measure_scenario(scenario, scenario_context) do
     scenario_input = Hooks.run_before_scenario(scenario, scenario_context)
     scenario_context = %ScenarioContext{scenario_context | scenario_input: scenario_input}
     _ = run_warmup(scenario, scenario_context)
@@ -118,7 +118,7 @@ defmodule Benchee.Benchmark.Runner do
     {run_times, memory_usages, reductions}
   end
 
-  defp run_warmup(
+  def run_warmup(
          scenario,
          scenario_context = %ScenarioContext{
            config: %Configuration{warmup: warmup}
@@ -127,7 +127,7 @@ defmodule Benchee.Benchmark.Runner do
     measure_runtimes(scenario, scenario_context, warmup, false)
   end
 
-  defp run_runtime_benchmark(
+  def run_runtime_benchmark(
          scenario,
          scenario_context = %ScenarioContext{
            config: %Configuration{
@@ -139,19 +139,19 @@ defmodule Benchee.Benchmark.Runner do
     measure_runtimes(scenario, scenario_context, run_time, fast_warning)
   end
 
-  defp deduct_function_call_overhead(run_times, 0) do
+  def deduct_function_call_overhead(run_times, 0) do
     run_times
   end
 
-  defp deduct_function_call_overhead(run_times, overhead) do
+  def deduct_function_call_overhead(run_times, overhead) do
     Enum.map(run_times, fn time ->
       max(time - overhead, 0)
     end)
   end
 
-  defp deduct_reduction_overhead([]), do: []
+  def deduct_reduction_overhead([]), do: []
 
-  defp deduct_reduction_overhead(reductions) do
+  def deduct_reduction_overhead(reductions) do
     me = self()
     ref = make_ref()
 
@@ -168,11 +168,11 @@ defmodule Benchee.Benchmark.Runner do
     Enum.map(reductions, &(&1 - offset))
   end
 
-  defp run_reductions_benchmark(_, %ScenarioContext{config: %{reduction_time: 0.0}}) do
+  def run_reductions_benchmark(_, %ScenarioContext{config: %{reduction_time: 0.0}}) do
     []
   end
 
-  defp run_reductions_benchmark(
+  def run_reductions_benchmark(
          scenario,
          scenario_context = %ScenarioContext{
            config: %Configuration{
@@ -191,11 +191,11 @@ defmodule Benchee.Benchmark.Runner do
     do_benchmark(scenario, new_context, Collect.Reductions, [])
   end
 
-  defp run_memory_benchmark(_, %ScenarioContext{config: %{memory_time: 0.0}}) do
+  def run_memory_benchmark(_, %ScenarioContext{config: %{memory_time: 0.0}}) do
     []
   end
 
-  defp run_memory_benchmark(
+  def run_memory_benchmark(
          scenario,
          scenario_context = %ScenarioContext{
            config: %Configuration{
@@ -215,10 +215,10 @@ defmodule Benchee.Benchmark.Runner do
   end
 
   @spec measure_runtimes(Scenario.t(), ScenarioContext.t(), number, boolean) :: [number]
-  defp measure_runtimes(scenario, context, run_time, fast_warning)
-  defp measure_runtimes(_, _, 0.0, _), do: []
+  def measure_runtimes(scenario, context, run_time, fast_warning)
+  def measure_runtimes(_, _, 0.0, _), do: []
 
-  defp measure_runtimes(scenario, scenario_context, run_time, fast_warning) do
+  def measure_runtimes(scenario, scenario_context, run_time, fast_warning) do
     end_time = current_time() + run_time
     :erlang.garbage_collect()
 
@@ -235,14 +235,14 @@ defmodule Benchee.Benchmark.Runner do
     do_benchmark(scenario, new_context, Collect.Time, [initial_run_time])
   end
 
-  defp current_time, do: :erlang.system_time(:nano_seconds)
+  def current_time, do: :erlang.system_time(:nano_seconds)
 
   # `run_times` is kept separately from the `Scenario` so that for the
   # `parallel` execution case we can easily concatenate and flatten the results
   # of all processes. That's why we add them to the scenario once after
   # measuring has finished. `scenario` is still needed in general for the
   # benchmarking function, hooks etc.
-  defp do_benchmark(
+  def do_benchmark(
          _scenario,
          %ScenarioContext{
            current_time: current_time,
@@ -256,7 +256,7 @@ defmodule Benchee.Benchmark.Runner do
     Enum.reverse(measurements)
   end
 
-  defp do_benchmark(scenario, scenario_context, collector, measurements) do
+  def do_benchmark(scenario, scenario_context, collector, measurements) do
     measurement = collect(scenario, scenario_context, collector)
     updated_context = %ScenarioContext{scenario_context | current_time: current_time()}
 
@@ -270,8 +270,8 @@ defmodule Benchee.Benchmark.Runner do
 
   # We return `nil` if memory measurement failed so keep it empty
   @spec updated_measurements(number | nil, [number]) :: [number]
-  defp updated_measurements(nil, measurements), do: measurements
-  defp updated_measurements(measurement, measurements), do: [measurement | measurements]
+  def updated_measurements(nil, measurements), do: measurements
+  def updated_measurements(measurement, measurements), do: [measurement | measurements]
 
   @doc """
   Takes one measure with the given collector.
@@ -309,8 +309,8 @@ defmodule Benchee.Benchmark.Runner do
   def main_function(function, @no_input), do: function
   def main_function(function, input), do: fn -> function.(input) end
 
-  defp invoke_collector({collector, collector_opts}, function),
+  def invoke_collector({collector, collector_opts}, function),
     do: collector.collect(function, collector_opts)
 
-  defp invoke_collector(collector, function), do: collector.collect(function)
+  def invoke_collector(collector, function), do: collector.collect(function)
 end

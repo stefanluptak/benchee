@@ -101,7 +101,7 @@ defmodule Benchee.Utility.ErlangVersion do
   # `Version` only supports full SemVer, Erlang loves version numbers like `22.3.4.24` or `22.0`
   # which makes `Version` error out so we gotta manually alter them so that it's `22.3.4`
   @last_version_segment ~r/\.\d+$/
-  defp parse_erlang_version(erlang_version) do
+  def parse_erlang_version(erlang_version) do
     # dot count is a heuristic but it should work
     dot_count =
       erlang_version
@@ -122,7 +122,7 @@ defmodule Benchee.Utility.ErlangVersion do
   # Only major/minor seem to get the rc treatment
   # but if it is major/minor/patch `Version` handles it correctly.
   # For the 4 digit versions we don't really care right now/normally does not happen.
-  defp deal_with_major_minor(erlang_version) do
+  def deal_with_major_minor(erlang_version) do
     # -rc and other weird versions contain -
     if String.contains?(erlang_version, "-") do
       String.replace(erlang_version, "-", ".0-")

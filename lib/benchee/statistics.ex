@@ -171,7 +171,7 @@ defmodule Benchee.Statistics do
     end)
   end
 
-  defp calculate_scenario_statistics(scenario, percentiles) do
+  def calculate_scenario_statistics(scenario, percentiles) do
     run_time_stats =
       scenario.run_time_data.samples
       |> calculate_statistics(percentiles)
@@ -197,19 +197,19 @@ defmodule Benchee.Statistics do
     }
   end
 
-  defp calculate_statistics([], _) do
+  def calculate_statistics([], _) do
     %__MODULE__{
       sample_size: 0
     }
   end
 
-  defp calculate_statistics(samples, percentiles) do
+  def calculate_statistics(samples, percentiles) do
     samples
     |> Statistex.statistics(percentiles: percentiles)
     |> convert_from_statistex
   end
 
-  defp convert_from_statistex(statistex_statistics) do
+  def convert_from_statistex(statistex_statistics) do
     %__MODULE__{
       average: statistex_statistics.average,
       std_dev: statistex_statistics.standard_deviation,
@@ -223,10 +223,10 @@ defmodule Benchee.Statistics do
     }
   end
 
-  defp add_ips(statistics = %__MODULE__{sample_size: 0}), do: statistics
-  defp add_ips(statistics = %__MODULE__{average: 0.0}), do: statistics
+  def add_ips(statistics = %__MODULE__{sample_size: 0}), do: statistics
+  def add_ips(statistics = %__MODULE__{average: 0.0}), do: statistics
 
-  defp add_ips(statistics) do
+  def add_ips(statistics) do
     ips = Duration.convert_value({1, :second}, :nanosecond) / statistics.average
     standard_dev_ips = ips * statistics.std_dev_ratio
 

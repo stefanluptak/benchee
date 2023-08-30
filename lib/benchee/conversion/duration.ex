@@ -108,7 +108,7 @@ defmodule Benchee.Conversion.Duration do
   end
 
   # Helper function for returning a tuple of {value, unit}
-  defp scale_with_unit(duration, unit) do
+  def scale_with_unit(duration, unit) do
     {scale(duration, unit), unit_for(unit)}
   end
 

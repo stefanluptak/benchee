@@ -41,7 +41,7 @@ defmodule Benchee.Output.BenchmarkPrinter do
     suite_information(scenarios, config)
   end
 
-  defp system_information(%{
+  def system_information(%{
          erlang: erlang_version,
          elixir: elixir_version,
          os: os,
@@ -59,7 +59,7 @@ defmodule Benchee.Output.BenchmarkPrinter do
     """)
   end
 
-  defp suite_information(scenarios, %{
+  def suite_information(scenarios, %{
          parallel: parallel,
          time: time,
          warmup: warmup,
@@ -83,9 +83,9 @@ defmodule Benchee.Output.BenchmarkPrinter do
     """)
   end
 
-  defp inputs_out(nil), do: "none specified"
+  def inputs_out(nil), do: "none specified"
 
-  defp inputs_out(inputs) do
+  def inputs_out(inputs) do
     Enum.map_join(inputs, ", ", fn {name, _} -> name end)
   end
 
@@ -102,8 +102,8 @@ defmodule Benchee.Output.BenchmarkPrinter do
   end
 
   @no_input Benchmark.no_input()
-  defp input_information(@no_input), do: ""
-  defp input_information(input_name), do: " with input #{input_name}"
+  def input_information(@no_input), do: ""
+  def input_information(input_name), do: " with input #{input_name}"
 
   @doc """
   Prints a warning about accuracy of benchmarks when the function is super fast.

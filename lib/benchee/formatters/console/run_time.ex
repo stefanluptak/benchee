@@ -79,13 +79,13 @@ defmodule Benchee.Formatters.Console.RunTime do
     end
   end
 
-  defp run_time_measurements_present?(scenarios) do
+  def run_time_measurements_present?(scenarios) do
     Enum.any?(scenarios, fn scenario ->
       scenario.run_time_data.statistics.sample_size > 0
     end)
   end
 
-  defp render(scenarios, config) do
+  def render(scenarios, config) do
     %{unit_scaling: scaling_strategy} = config
     units = Conversion.units(scenarios, scaling_strategy)
     label_width = Helpers.label_width(scenarios)
@@ -101,7 +101,7 @@ defmodule Benchee.Formatters.Console.RunTime do
   @spec extended_statistics_report([Scenario.t()], unit_per_statistic, integer, map) :: [
           String.t()
         ]
-  defp extended_statistics_report(scenarios, units, label_width, %{extended_statistics: true}) do
+  def extended_statistics_report(scenarios, units, label_width, %{extended_statistics: true}) do
     [
       Helpers.descriptor("Extended statistics"),
       extended_column_descriptors(label_width)
@@ -109,19 +109,19 @@ defmodule Benchee.Formatters.Console.RunTime do
     ]
   end
 
-  defp extended_statistics_report(_, _, _, _) do
+  def extended_statistics_report(_, _, _, _) do
     []
   end
 
   @spec extended_statistics([Scenario.t()], unit_per_statistic, integer) :: [String.t()]
-  defp extended_statistics(scenarios, units, label_width) do
+  def extended_statistics(scenarios, units, label_width) do
     Enum.map(scenarios, fn scenario ->
       format_scenario_extended(scenario, units, label_width)
     end)
   end
 
   @spec format_scenario_extended(Scenario.t(), unit_per_statistic, integer) :: String.t()
-  defp format_scenario_extended(scenario, %{run_time: run_time_unit}, label_width) do
+  def format_scenario_extended(scenario, %{run_time: run_time_unit}, label_width) do
     %Scenario{
       name: name,
       run_time_data: %{
@@ -151,7 +151,7 @@ defmodule Benchee.Formatters.Console.RunTime do
   end
 
   @spec extended_column_descriptors(integer) :: String.t()
-  defp extended_column_descriptors(label_width) do
+  def extended_column_descriptors(label_width) do
     "\n~*s~*s~*s~*s~*s\n"
     |> :io_lib.format([
       -label_width,
@@ -169,7 +169,7 @@ defmodule Benchee.Formatters.Console.RunTime do
   end
 
   @spec column_descriptors(integer) :: String.t()
-  defp column_descriptors(label_width) do
+  def column_descriptors(label_width) do
     "\n~*s~*s~*s~*s~*s~*s\n"
     |> :io_lib.format([
       -label_width,
@@ -189,14 +189,14 @@ defmodule Benchee.Formatters.Console.RunTime do
   end
 
   @spec scenario_reports([Scenario.t()], unit_per_statistic, integer) :: [String.t()]
-  defp scenario_reports(scenarios, units, label_width) do
+  def scenario_reports(scenarios, units, label_width) do
     Enum.map(scenarios, fn scenario ->
       format_scenario(scenario, units, label_width)
     end)
   end
 
   @spec format_scenario(Scenario.t(), unit_per_statistic, integer) :: String.t()
-  defp format_scenario(scenario, %{run_time: run_time_unit, ips: ips_unit}, label_width) do
+  def format_scenario(scenario, %{run_time: run_time_unit, ips: ips_unit}, label_width) do
     %Scenario{
       name: name,
       run_time_data: %{
@@ -229,13 +229,13 @@ defmodule Benchee.Formatters.Console.RunTime do
   end
 
   @spec comparison_report([Scenario.t()], unit_per_statistic, integer, map) :: [String.t()]
-  defp comparison_report(scenarios, units, label_width, config)
+  def comparison_report(scenarios, units, label_width, config)
 
   # No need for a comparison when only one benchmark was run
-  defp comparison_report([_scenario], _, _, _), do: []
-  defp comparison_report(_, _, _, %{comparison: false}), do: []
+  def comparison_report([_scenario], _, _, _), do: []
+  def comparison_report(_, _, _, %{comparison: false}), do: []
 
-  defp comparison_report([scenario | other_scenarios], units, label_width, _) do
+  def comparison_report([scenario | other_scenarios], units, label_width, _) do
     [
       Helpers.descriptor("Comparison"),
       reference_report(scenario, units, label_width)
@@ -243,7 +243,7 @@ defmodule Benchee.Formatters.Console.RunTime do
     ]
   end
 
-  defp reference_report(scenario, %{ips: ips_unit}, label_width) do
+  def reference_report(scenario, %{ips: ips_unit}, label_width) do
     %Scenario{name: name, run_time_data: %{statistics: %Statistics{ips: ips}}} = scenario
 
     "~*s~*s\n"
@@ -252,7 +252,7 @@ defmodule Benchee.Formatters.Console.RunTime do
   end
 
   @spec comparisons([Scenario.t()], unit_per_statistic, integer) :: [String.t()]
-  defp comparisons(scenarios_to_compare, units, label_width) do
+  def comparisons(scenarios_to_compare, units, label_width) do
     Enum.map(
       scenarios_to_compare,
       fn scenario ->
@@ -272,7 +272,7 @@ defmodule Benchee.Formatters.Console.RunTime do
     )
   end
 
-  defp duration_output(duration, unit) do
+  def duration_output(duration, unit) do
     Duration.format({Duration.scale(duration, unit), unit})
   end
 end

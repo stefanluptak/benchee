@@ -106,7 +106,7 @@ defmodule Benchee.Formatters.Console do
   # Normally one would prepend to lists and not append. In this case this lead to 2
   # `Enum.reverse` scattered around. As these lists are usually very small (mostly less
   # than 10 elements) I opted for `++` here.
-  defp update_grouped_list(scenario, grouped_scenarios) do
+  def update_grouped_list(scenario, grouped_scenarios) do
     case List.keyfind(grouped_scenarios, scenario.input_name, 0) do
       {_, group} ->
         new_tuple = {scenario.input_name, group ++ [scenario]}
@@ -128,7 +128,7 @@ defmodule Benchee.Formatters.Console do
     _ -> {:error, "Unknown Error"}
   end
 
-  defp generate_output(scenarios, config, input) do
+  def generate_output(scenarios, config, input) do
     [
       suite_header(input, config)
       | RunTime.format_scenarios(scenarios, config) ++
@@ -137,14 +137,14 @@ defmodule Benchee.Formatters.Console do
     ]
   end
 
-  defp suite_header(input, config) do
+  def suite_header(input, config) do
     "#{title_header(config)}#{input_header(input)}"
   end
 
-  defp title_header(%{title: nil}), do: ""
-  defp title_header(%{title: title}), do: "\n*** #{title} ***\n"
+  def title_header(%{title: nil}), do: ""
+  def title_header(%{title: title}), do: "\n*** #{title} ***\n"
 
   @no_input_marker Benchee.Benchmark.no_input()
-  defp input_header(input) when input == @no_input_marker, do: ""
-  defp input_header(input), do: "\n##### With input #{input} #####"
+  def input_header(input) when input == @no_input_marker, do: ""
+  def input_header(input), do: "\n##### With input #{input} #####"
 end

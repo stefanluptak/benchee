@@ -17,31 +17,31 @@ defmodule BenchKeyword do
     :not_deleted -> keywords
   end
 
-  defp do_delete([{key, _} | rest], key, _deleted?),
+  def do_delete([{key, _} | rest], key, _deleted?),
     do: do_delete(rest, key, true)
 
-  defp do_delete([{_, _} = pair | rest], key, deleted?),
+  def do_delete([{_, _} = pair | rest], key, deleted?),
     do: [pair | do_delete(rest, key, deleted?)]
 
-  defp do_delete([], _key, _deleted? = true),
+  def do_delete([], _key, _deleted? = true),
     do: []
 
-  defp do_delete([], _key, _deleted? = false),
+  def do_delete([], _key, _deleted? = false),
     do: throw(:not_deleted)
 
   def delete_v2(keywords, key) when is_list(keywords) and is_atom(key) do
     delete_v2_key(keywords, key, [])
   end
 
-  defp delete_v2_key([{key, _} | tail], key, heads) do
+  def delete_v2_key([{key, _} | tail], key, heads) do
     delete_v2_key(tail, key, heads)
   end
 
-  defp delete_v2_key([{_, _} = pair | tail], key, heads) do
+  def delete_v2_key([{_, _} = pair | tail], key, heads) do
     delete_v2_key(tail, key, [pair | heads])
   end
 
-  defp delete_v2_key([], _key, heads) do
+  def delete_v2_key([], _key, heads) do
     :lists.reverse(heads)
   end
 
@@ -52,15 +52,15 @@ defmodule BenchKeyword do
     end
   end
 
-  defp delete_v3_key([{key, _} | tail], key, heads) do
+  def delete_v3_key([{key, _} | tail], key, heads) do
     delete_v3_key(tail, key, heads)
   end
 
-  defp delete_v3_key([{_, _} = pair | tail], key, heads) do
+  def delete_v3_key([{_, _} = pair | tail], key, heads) do
     delete_v3_key(tail, key, [pair | heads])
   end
 
-  defp delete_v3_key([], _key, heads) do
+  def delete_v3_key([], _key, heads) do
     :lists.reverse(heads)
   end
 end

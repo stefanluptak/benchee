@@ -35,7 +35,7 @@ defmodule Benchee.Benchmark.Collect.Memory do
     await_results(nil, ref)
   end
 
-  defp await_results(return_value, ref) do
+  def await_results(return_value, ref) do
     receive do
       {^ref, memory_usage} ->
         return_memory({memory_usage, return_value})
@@ -53,7 +53,7 @@ defmodule Benchee.Benchmark.Collect.Memory do
     end
   end
 
-  defp start_runner(fun, ref) do
+  def start_runner(fun, ref) do
     parent = self()
 
     spawn_link(fn ->
@@ -77,10 +77,10 @@ defmodule Benchee.Benchmark.Collect.Memory do
     end)
   end
 
-  defp return_memory({memory_usage, return_value}) when memory_usage < 0, do: {nil, return_value}
-  defp return_memory(memory_usage_info), do: memory_usage_info
+  def return_memory({memory_usage, return_value}) when memory_usage < 0, do: {nil, return_value}
+  def return_memory(memory_usage_info), do: memory_usage_info
 
-  defp measure_memory(fun, tracer, parent) do
+  def measure_memory(fun, tracer, parent) do
     :erlang.garbage_collect()
     send(tracer, :begin_collection)
 
@@ -104,7 +104,7 @@ defmodule Benchee.Benchmark.Collect.Memory do
     {parent, fun}
   end
 
-  defp get_collected_memory(tracer) do
+  def get_collected_memory(tracer) do
     ref = Process.monitor(tracer)
     send(tracer, {:get_collected_memory, self(), ref})
 
@@ -114,11 +114,11 @@ defmodule Benchee.Benchmark.Collect.Memory do
     end
   end
 
-  defp start_tracer(pid) do
+  def start_tracer(pid) do
     spawn(fn -> tracer_loop(pid, 0) end)
   end
 
-  defp tracer_loop(pid, acc) do
+  def tracer_loop(pid, acc) do
     receive do
       :begin_collection ->
         :erlang.trace(pid, true, [:garbage_collection, tracer: self()])
@@ -144,7 +144,7 @@ defmodule Benchee.Benchmark.Collect.Memory do
     end
   end
 
-  defp listen_gc_end(pid, tag, acc, mem_before) do
+  def listen_gc_end(pid, tag, acc, mem_before) do
     receive do
       {:trace, ^pid, ^tag, info} ->
         mem_after = total_memory(info)
@@ -152,7 +152,7 @@ defmodule Benchee.Benchmark.Collect.Memory do
     end
   end
 
-  defp total_memory(info) do
+  def total_memory(info) do
     # `:heap_size` seems to only contain the memory size of the youngest
     # generation `:old_heap_size` has the old generation. There is also
     # `:recent_size` but that seems to already be accounted for.

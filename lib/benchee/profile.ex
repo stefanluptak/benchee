@@ -86,7 +86,7 @@ defmodule Benchee.Profile do
     suite
   end
 
-  defp do_profile(scenarios, {profiler, profiler_opts}, config, printer) do
+  def do_profile(scenarios, {profiler, profiler_opts}, config, printer) do
     profiler_module = profiler_to_module(profiler)
 
     Enum.each(scenarios, fn scenario ->
@@ -94,7 +94,7 @@ defmodule Benchee.Profile do
     end)
   end
 
-  defp run(
+  def run(
          scenario,
          {profiler, profiler_module, profiler_opts},
          config,
@@ -111,7 +111,7 @@ defmodule Benchee.Profile do
 
   # If given a builtin profiler the function will return its proper module.
   # In the case of an unknown profiler, it will raise an `UnknownProfilerError` exception.
-  defp profiler_to_module(profiler) do
+  def profiler_to_module(profiler) do
     if Enum.member?(@builtin_profilers, profiler) do
       profiler =
         profiler

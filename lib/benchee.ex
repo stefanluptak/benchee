@@ -53,7 +53,7 @@ for {module, moduledoc} <- [{Benchee, elixir_doc}, {:benchee, erlang_doc}] do
       |> Benchee.profile()
     end
 
-    defp add_benchmarking_jobs(suite, jobs) do
+    def add_benchmarking_jobs(suite, jobs) do
       Enum.reduce(jobs, suite, fn {key, function}, suite_acc ->
         Benchee.benchmark(suite_acc, key, function)
       end)

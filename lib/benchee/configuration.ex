@@ -309,13 +309,13 @@ defmodule Benchee.Configuration do
     %Suite{configuration: config}
   end
 
-  defp standardized_user_configuration(config) do
+  def standardized_user_configuration(config) do
     config
     |> DeepConvert.to_map([:formatters, :inputs])
     |> standardize_inputs()
   end
 
-  defp standardize_inputs(config = %{inputs: inputs}) do
+  def standardize_inputs(config = %{inputs: inputs}) do
     standardized_inputs =
       inputs
       |> Enum.reduce([], &standardize_inputs/2)
@@ -324,9 +324,9 @@ defmodule Benchee.Configuration do
     %{config | inputs: standardized_inputs}
   end
 
-  defp standardize_inputs(config), do: config
+  def standardize_inputs(config), do: config
 
-  defp standardize_inputs({name, value}, acc) do
+  def standardize_inputs({name, value}, acc) do
     normalized_name = to_string(name)
 
     if List.keymember?(acc, normalized_name, 0) do
@@ -336,11 +336,11 @@ defmodule Benchee.Configuration do
     end
   end
 
-  defp merge_with_defaults(user_config) do
+  def merge_with_defaults(user_config) do
     DeepMerge.deep_merge(%Configuration{}, user_config)
   end
 
-  defp convert_time_to_nano_s(config) do
+  def convert_time_to_nano_s(config) do
     Enum.reduce(@time_keys, config, fn key, new_config ->
       {_, new_config} =
         Map.get_and_update!(new_config, key, fn seconds ->
@@ -351,16 +351,16 @@ defmodule Benchee.Configuration do
     end)
   end
 
-  defp save_option_conversion(config = %{save: false}), do: config
+  def save_option_conversion(config = %{save: false}), do: config
 
-  defp save_option_conversion(config = %{save: save_values}) do
+  def save_option_conversion(config = %{save: save_values}) do
     save_options = Map.merge(save_defaults(), save_values)
     tagged_save_options = %{tag: save_options.tag, path: save_options.path}
     formatters = config.formatters ++ [{Benchee.Formatters.TaggedSave, tagged_save_options}]
     %__MODULE__{config | formatters: formatters}
   end
 
-  defp save_defaults do
+  def save_defaults do
     now = DateTime.utc_now()
 
     %{

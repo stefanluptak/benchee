@@ -39,6 +39,8 @@ defmodule Benchee.Benchmark.RepeatedMeasurement do
         clock_info \\ :erlang.system_info(:os_monotonic_time_source),
         collector \\ Collect.Time
       ) do
+    dbg([system_info, clock_info])
+        
     resolution_adjustment = determine_resolution_adjustment(system_info, clock_info)
 
     do_determine_n_times(
@@ -56,7 +58,7 @@ defmodule Benchee.Benchmark.RepeatedMeasurement do
   # MacOS usually measures in micro seconds so that's the best default to return when not given
   @old_macos_value 1_000
 
-  defp determine_resolution_adjustment(system_info, clock_info) do
+  def determine_resolution_adjustment(system_info, clock_info) do
     if trust_clock?(system_info) do
       # If the resolution is 1_000_000 that means microsecond, while 1_000_000_000 is nanosecond.
       # we then need to adjust our measured time by that value. I.e. if we measured "5000" here we
@@ -70,15 +72,15 @@ defmodule Benchee.Benchmark.RepeatedMeasurement do
   end
 
   # Can't really trust the macOS clock on OTP before mentioned version, see tickets linked above
-  defp trust_clock?(%{os: :macOS, erlang: erlang_version}) do
+  def trust_clock?(%{os: :macOS, erlang: erlang_version}) do
     ErlangVersion.includes_fixes_from?(erlang_version, @fixed_erlang_vesion)
   end
 
   # If `suite.system` wasn't populated then we'll not mistrust it as well as all others
   # (can happen if people call parts of benchee themselves without calling system first)
-  defp trust_clock?(_), do: true
+  def trust_clock?(_), do: true
 
-  defp do_determine_n_times(
+  def do_determine_n_times(
          scenario,
          scenario_context = %ScenarioContext{
            num_iterations: num_iterations,
@@ -107,12 +109,12 @@ defmodule Benchee.Benchmark.RepeatedMeasurement do
 
   # we need to convert the time here since we measure native time to see when we have enough
   # repetitions but the first time is used in the actual samples
-  defp report_time(measurement, num_iterations) do
+  def report_time(measurement, num_iterations) do
     adjust_for_iterations(measurement, num_iterations)
   end
 
-  defp adjust_for_iterations(measurement, 1), do: measurement
-  defp adjust_for_iterations(measurement, num_iterations), do: measurement / num_iterations
+  def adjust_for_iterations(measurement, 1), do: measurement
+  def adjust_for_iterations(measurement, num_iterations), do: measurement / num_iterations
 
   @spec collect(Scenario.t(), ScenarioContext.t(), module) :: number
   def collect(
@@ -127,7 +129,7 @@ defmodule Benchee.Benchmark.RepeatedMeasurement do
     adjust_for_iterations(measurement, num_iterations)
   end
 
-  defp measure_iteration(
+  def measure_iteration(
          scenario,
          scenario_context = %ScenarioContext{
            num_iterations: 1
@@ -137,7 +139,7 @@ defmodule Benchee.Benchmark.RepeatedMeasurement do
     Runner.collect(scenario, scenario_context, collector)
   end
 
-  defp measure_iteration(
+  def measure_iteration(
          scenario,
          scenario_context = %ScenarioContext{
            num_iterations: iterations
@@ -166,7 +168,7 @@ defmodule Benchee.Benchmark.RepeatedMeasurement do
   #   accurately measure it in one go. Hence, we can't split up the function
   #   execution and hooks anymore and sadly we also measure the time of the
   #   hooks.
-  defp build_benchmarking_function(
+  def build_benchmarking_function(
          %Scenario{
            function: function,
            before_each: nil,
@@ -185,7 +187,7 @@ defmodule Benchee.Benchmark.RepeatedMeasurement do
     fn -> RepeatN.repeat_n(main, iterations) end
   end
 
-  defp build_benchmarking_function(
+  def build_benchmarking_function(
          scenario = %Scenario{function: function},
          scenario_context = %ScenarioContext{num_iterations: iterations}
        )

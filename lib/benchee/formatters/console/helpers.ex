@@ -26,7 +26,7 @@ defmodule Benchee.Formatters.Console.Helpers do
     unit_output(mode, run_time_unit)
   end
 
-  defp unit_output(value, unit) do
+  def unit_output(value, unit) do
     Format.format({Scale.scale(value, unit), unit})
   end
 
@@ -74,22 +74,22 @@ defmodule Benchee.Formatters.Console.Helpers do
     |> to_string
   end
 
-  defp comparison_display(%Statistics{relative_more: nil, absolute_difference: nil}, _, _), do: ""
+  def comparison_display(%Statistics{relative_more: nil, absolute_difference: nil}, _, _), do: ""
 
-  defp comparison_display(statistics, comparison_name, unit) do
+  def comparison_display(statistics, comparison_name, unit) do
     "- #{comparison_text(statistics, comparison_name)} #{absolute_difference_text(statistics, unit)}\n"
   end
 
-  defp comparison_text(%Statistics{relative_more: :infinity}, name), do: "∞ x #{name}"
-  defp comparison_text(%Statistics{relative_more: nil}, _), do: "N/A"
+  def comparison_text(%Statistics{relative_more: :infinity}, name), do: "∞ x #{name}"
+  def comparison_text(%Statistics{relative_more: nil}, _), do: "N/A"
 
-  defp comparison_text(statistics, comparison_name) do
+  def comparison_text(statistics, comparison_name) do
     "~.2fx ~s"
     |> :io_lib.format([statistics.relative_more, comparison_name])
     |> to_string
   end
 
-  defp absolute_difference_text(statistics, unit) do
+  def absolute_difference_text(statistics, unit) do
     formatted_value = Format.format({Scale.scale(statistics.absolute_difference, unit), unit})
 
     if statistics.absolute_difference >= 0 do

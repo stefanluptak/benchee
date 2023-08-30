@@ -31,15 +31,15 @@ defmodule Benchee.Utility.DeepConvert do
   def to_map([], _exclusions), do: %{}
   def to_map(structure, exclusions), do: do_to_map(structure, exclusions)
 
-  defp do_to_map(kwlist = [{_key, _value} | _tail], exclusions) do
+  def do_to_map(kwlist = [{_key, _value} | _tail], exclusions) do
     kwlist
     |> Enum.map(fn tuple -> to_map_element(tuple, exclusions) end)
     |> Map.new()
   end
 
-  defp do_to_map(no_list, _exclusions), do: no_list
+  def do_to_map(no_list, _exclusions), do: no_list
 
-  defp to_map_element({key, value}, exclusions) do
+  def to_map_element({key, value}, exclusions) do
     if Enum.member?(exclusions, key) do
       {key, value}
     else

@@ -64,17 +64,17 @@ defmodule Benchee.Formatter do
     suite
   end
 
-  defp normalize_module_configuration(formatter) when is_function(formatter, 1), do: formatter
+  def normalize_module_configuration(formatter) when is_function(formatter, 1), do: formatter
 
-  defp normalize_module_configuration({module, opts}) do
+  def normalize_module_configuration({module, opts}) do
     normalize_module_configuration(module, DeepConvert.to_map(opts))
   end
 
-  defp normalize_module_configuration(module) when is_atom(module) do
+  def normalize_module_configuration(module) when is_atom(module) do
     normalize_module_configuration(module, %{})
   end
 
-  defp normalize_module_configuration(module, opts) do
+  def normalize_module_configuration(module, opts) do
     if formatter_module?(module) do
       {module, opts}
     else
@@ -82,7 +82,7 @@ defmodule Benchee.Formatter do
     end
   end
 
-  defp formatter_module?(module) do
+  def formatter_module?(module) do
     :attributes
     |> module.module_info()
     |> Keyword.get(:behaviour, [])
@@ -90,7 +90,7 @@ defmodule Benchee.Formatter do
   end
 
   @spec raise_behaviour_not_implemented(atom) :: no_return()
-  defp raise_behaviour_not_implemented(module) do
+  def raise_behaviour_not_implemented(module) do
     raise """
     The module you're attempting to use as a formatter - #{module} - does
     not implement the `Benchee.Formatter` behaviour.
@@ -117,7 +117,7 @@ defmodule Benchee.Formatter do
   # Invokes `format/2` and `write/2` as defined by the `Benchee.Formatter`
   # behaviour. The output for all formatters is generated in parallel, and then
   # the results of that formatting are written in sequence.
-  defp parallel_output(suite, module_configurations) do
+  def parallel_output(suite, module_configurations) do
     module_configurations
     |> Parallel.map(fn {module, options} -> {module, options, module.format(suite, options)} end)
     |> Enum.each(fn {module, options, output} -> module.write(output, options) end)

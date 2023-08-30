@@ -101,7 +101,7 @@ defmodule Benchee.Conversion.Scale do
     do_convert({value, current_unit}, desired_unit)
   end
 
-  defp do_convert(
+  def do_convert(
          {value, %Unit{magnitude: current_magnitude}},
          desired_unit = %Unit{magnitude: desired_magnitude}
        ) do
@@ -161,11 +161,11 @@ defmodule Benchee.Conversion.Scale do
     do_best_unit(Enum.reject(measurements, &is_nil/1), module, options)
   end
 
-  defp do_best_unit([], module, _) do
+  def do_best_unit([], module, _) do
     module.base_unit
   end
 
-  defp do_best_unit(list, module, opts) do
+  def do_best_unit(list, module, opts) do
     case Keyword.get(opts, :strategy, :best) do
       :best -> best_unit(list, module)
       :largest -> largest_unit(list, module)
@@ -176,7 +176,7 @@ defmodule Benchee.Conversion.Scale do
 
   # Finds the most common unit in the list. In case of tie, chooses the
   # largest of the most common
-  defp best_unit(list, module) do
+  def best_unit(list, module) do
     list
     |> Enum.map(fn n -> scale_unit(n, module) end)
     |> Enum.group_by(fn unit -> unit end)
@@ -187,36 +187,36 @@ defmodule Benchee.Conversion.Scale do
   end
 
   # Finds the smallest unit in the list
-  defp smallest_unit(list, module) do
+  def smallest_unit(list, module) do
     list
     |> Enum.map(fn n -> scale_unit(n, module) end)
     |> Enum.min_by(fn unit -> magnitude(unit) end)
   end
 
   # Finds the largest unit in the list
-  defp largest_unit(list, module) do
+  def largest_unit(list, module) do
     list
     |> Enum.map(fn n -> scale_unit(n, module) end)
     |> Enum.max_by(fn unit -> magnitude(unit) end)
   end
 
-  defp scale_unit(count, module) do
+  def scale_unit(count, module) do
     {_, unit} = module.scale(count)
     unit
   end
 
   # Fetches the magnitude for the given unit
-  defp magnitude(%Unit{magnitude: magnitude}) do
+  def magnitude(%Unit{magnitude: magnitude}) do
     magnitude
   end
 
   # Sorts two elements first by total, then by magnitude of the unit in case
   # of tie
-  defp by_frequency_and_magnitude({unit_a, frequency}, {unit_b, frequency}) do
+  def by_frequency_and_magnitude({unit_a, frequency}, {unit_b, frequency}) do
     magnitude(unit_a) > magnitude(unit_b)
   end
 
-  defp by_frequency_and_magnitude({_, frequency_a}, {_, frequency_b}) do
+  def by_frequency_and_magnitude({_, frequency_a}, {_, frequency_b}) do
     frequency_a > frequency_b
   end
 end

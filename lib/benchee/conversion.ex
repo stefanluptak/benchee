@@ -64,7 +64,7 @@ defmodule Benchee.Conversion do
     }
   end
 
-  defp measurements_for(scenarios, path) do
+  def measurements_for(scenarios, path) do
     paths = [Access.key(path), Access.key(:statistics)]
 
     scenarios

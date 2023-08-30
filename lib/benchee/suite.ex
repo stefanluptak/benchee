@@ -61,7 +61,7 @@ if Code.ensure_loaded?(Table.Reader) do
       {:rows, %{columns: columns, count: count}, rows}
     end
 
-    defp map_measurements_processed(suite) do
+    def map_measurements_processed(suite) do
       Enum.filter(Scenario.measurement_types(), fn type ->
         Enum.any?(suite.scenarios, fn scenario -> Scenario.data_processed?(scenario, type) end)
       end)
@@ -81,7 +81,7 @@ if Code.ensure_loaded?(Table.Reader) do
 
     @non_run_time_fields List.delete(@run_time_fields, "ips")
 
-    defp get_columns_from_suite(suite, measurements_processed) do
+    def get_columns_from_suite(suite, measurements_processed) do
       config_percentiles = suite.configuration.percentiles
 
       percentile_labels =
@@ -99,10 +99,10 @@ if Code.ensure_loaded?(Table.Reader) do
       ["job_name" | measurement_headers]
     end
 
-    defp fields_for(:run_time), do: @run_time_fields
-    defp fields_for(_), do: @non_run_time_fields
+    def fields_for(:run_time), do: @run_time_fields
+    def fields_for(_), do: @non_run_time_fields
 
-    defp extract_rows_from_suite(suite, measurements_processed) do
+    def extract_rows_from_suite(suite, measurements_processed) do
       config_percentiles = suite.configuration.percentiles
 
       Enum.map_reduce(suite.scenarios, 0, fn %Scenario{} = scenario, count ->
@@ -119,7 +119,7 @@ if Code.ensure_loaded?(Table.Reader) do
       end)
     end
 
-    defp get_stats_from_collection_data(
+    def get_stats_from_collection_data(
            %CollectionData{statistics: statistics, samples: samples},
            measurement_type,
            percentiles
@@ -143,7 +143,7 @@ if Code.ensure_loaded?(Table.Reader) do
       ])
     end
 
-    defp maybe_ips(statistics, :run_time), do: [statistics.ips]
-    defp maybe_ips(_, _not_run_time), do: []
+    def maybe_ips(statistics, :run_time), do: [statistics.ips]
+    def maybe_ips(_, _not_run_time), do: []
   end
 end

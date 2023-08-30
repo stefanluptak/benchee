@@ -17,7 +17,7 @@ defmodule Benchee.Benchmark.Collect.Reductions do
     end
   end
 
-  defp get_reductions do
+  def get_reductions do
     {:reductions, reductions} = Process.info(self(), :reductions)
     reductions
   end

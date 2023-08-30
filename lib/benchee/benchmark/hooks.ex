@@ -25,8 +25,8 @@ defmodule Benchee.Benchmark.Hooks do
     |> run_before_function(local_before_scenario)
   end
 
-  defp run_before_function(input, nil), do: input
-  defp run_before_function(input, function), do: function.(input)
+  def run_before_function(input, nil), do: input
+  def run_before_function(input, function), do: function.(input)
 
   @spec run_before_each(Scenario.t(), ScenarioContext.t()) :: any
   def run_before_each(

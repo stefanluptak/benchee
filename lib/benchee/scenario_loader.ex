@@ -20,16 +20,16 @@ defmodule Benchee.ScenarioLoader do
     %Suite{suite | scenarios: scenarios ++ loaded}
   end
 
-  defp load_scenarios(false), do: []
-  defp load_scenarios(path) when is_binary(path), do: load_scenarios([path])
+  def load_scenarios(false), do: []
+  def load_scenarios(path) when is_binary(path), do: load_scenarios([path])
 
-  defp load_scenarios(paths) do
+  def load_scenarios(paths) do
     Enum.flat_map(paths, fn path_or_glob ->
       Enum.flat_map(Path.wildcard(path_or_glob), &load_scenario/1)
     end)
   end
 
-  defp load_scenario(path) do
+  def load_scenario(path) do
     loaded_suite =
       path
       |> File.read!()

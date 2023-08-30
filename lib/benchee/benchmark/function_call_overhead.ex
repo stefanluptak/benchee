@@ -26,22 +26,22 @@ defmodule Benchee.Benchmark.FunctionCallOverhead do
     Statistex.minimum(run_times)
   end
 
-  defp warmup(function) do
+  def warmup(function) do
     run_for(function, @overhead_determination_time / 2)
   end
 
-  defp run(function) do
+  def run(function) do
     run_for(function, @overhead_determination_time)
   end
 
-  defp run_for(function, run_time) do
+  def run_for(function, run_time) do
     end_time = current_time() + run_time
 
     do_run(function, [], end_time)
   end
 
   @spec do_run((() -> any), [number], number) :: [number, ...]
-  defp do_run(function, durations, end_time) do
+  def do_run(function, durations, end_time) do
     {duration, _} = Time.collect(function)
 
     if current_time() < end_time do
@@ -51,5 +51,5 @@ defmodule Benchee.Benchmark.FunctionCallOverhead do
     end
   end
 
-  defp current_time, do: :erlang.system_time(:nano_seconds)
+  def current_time, do: :erlang.system_time(:nano_seconds)
 end

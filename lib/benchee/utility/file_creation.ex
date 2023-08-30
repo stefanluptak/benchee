@@ -44,7 +44,7 @@ defmodule Benchee.Utility.FileCreation do
     end)
   end
 
-  defp default_each(file, content, input_filename) do
+  def default_each(file, content, input_filename) do
     :ok = IO.write(file, content)
     IO.puts("Generated #{input_filename}")
   end
@@ -123,11 +123,11 @@ defmodule Benchee.Utility.FileCreation do
     interleave(filename, [name])
   end
 
-  defp prepend(list, item) do
+  def prepend(list, item) do
     [item | list]
   end
 
-  defp to_filename(name_string) do
+  def to_filename(name_string) do
     no_input = Benchmark.no_input()
 
     case name_string do

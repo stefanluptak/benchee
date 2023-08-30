@@ -42,7 +42,7 @@ defmodule Benchee.Benchmark do
     end
   end
 
-  defp warn_if_evaluated(to_be_benchmark, job_name, printer) do
+  def warn_if_evaluated(to_be_benchmark, job_name, printer) do
     function =
       case to_be_benchmark do
         {function, _} -> function
@@ -54,11 +54,11 @@ defmodule Benchee.Benchmark do
     end
   end
 
-  defp duplicate?(scenarios, job_name) do
+  def duplicate?(scenarios, job_name) do
     Enum.any?(scenarios, fn scenario -> scenario.name == job_name end)
   end
 
-  defp add_scenario(
+  def add_scenario(
          suite = %Suite{scenarios: scenarios, configuration: config},
          job_name,
          function
@@ -67,7 +67,7 @@ defmodule Benchee.Benchmark do
     %Suite{suite | scenarios: List.flatten([scenarios | new_scenarios])}
   end
 
-  defp build_scenarios_for_job(job_name, function, %{inputs: nil}) do
+  def build_scenarios_for_job(job_name, function, %{inputs: nil}) do
     [
       build_scenario(%{
         job_name: job_name,
@@ -78,7 +78,7 @@ defmodule Benchee.Benchmark do
     ]
   end
 
-  defp build_scenarios_for_job(job_name, function, %{inputs: inputs}) do
+  def build_scenarios_for_job(job_name, function, %{inputs: inputs}) do
     Enum.map(inputs, fn {input_name, input} ->
       build_scenario(%{
         job_name: job_name,
@@ -89,18 +89,18 @@ defmodule Benchee.Benchmark do
     end)
   end
 
-  defp build_scenario(scenario_data = %{function: {function, options}}) do
+  def build_scenario(scenario_data = %{function: {function, options}}) do
     scenario_data
     |> Map.put(:function, function)
     |> Map.merge(DeepConvert.to_map(options))
     |> build_scenario
   end
 
-  defp build_scenario(scenario_data) do
+  def build_scenario(scenario_data) do
     struct!(Scenario, add_scenario_name(scenario_data))
   end
 
-  defp add_scenario_name(scenario_data) do
+  def add_scenario_name(scenario_data) do
     Map.put(scenario_data, :name, Scenario.display_name(scenario_data))
   end
 

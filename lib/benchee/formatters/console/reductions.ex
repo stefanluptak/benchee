@@ -34,13 +34,13 @@ defmodule Benchee.Formatters.Console.Reductions do
     end
   end
 
-  defp reductions_measurements_present?(scenarios) do
+  def reductions_measurements_present?(scenarios) do
     Enum.any?(scenarios, fn scenario ->
       scenario.reductions_data.statistics.sample_size > 0
     end)
   end
 
-  defp render(scenarios, config) do
+  def render(scenarios, config) do
     scaling_strategy = config.unit_scaling
     units = Conversion.units(scenarios, scaling_strategy)
     label_width = Helpers.label_width(scenarios)
@@ -55,15 +55,15 @@ defmodule Benchee.Formatters.Console.Reductions do
     ])
   end
 
-  defp all_have_deviation_of_0?(scenarios) do
+  def all_have_deviation_of_0?(scenarios) do
     Enum.all?(scenarios, fn scenario ->
       scenario.reductions_data.statistics.std_dev == 0.0
     end)
   end
 
-  defp column_descriptors(label_width, hide_statistics)
+  def column_descriptors(label_width, hide_statistics)
 
-  defp column_descriptors(label_width, false) do
+  def column_descriptors(label_width, false) do
     "\n~*s~*s~*s~*s~*s\n"
     |> :io_lib.format([
       -label_width,
@@ -80,7 +80,7 @@ defmodule Benchee.Formatters.Console.Reductions do
     |> to_string
   end
 
-  defp column_descriptors(label_width, true) do
+  def column_descriptors(label_width, true) do
     "\n~*s~*s\n"
     |> :io_lib.format([
       -label_width,
@@ -92,9 +92,9 @@ defmodule Benchee.Formatters.Console.Reductions do
   end
 
   @spec scenario_reports([Scenario.t()], unit_per_statistic, integer, boolean) :: [String.t()]
-  defp scenario_reports(scenarios, units, label_width, hide_statistics)
+  def scenario_reports(scenarios, units, label_width, hide_statistics)
 
-  defp scenario_reports([scenario | other_scenarios], units, label_width, true) do
+  def scenario_reports([scenario | other_scenarios], units, label_width, true) do
     [
       reference_report(scenario, units, label_width),
       comparisons(other_scenarios, units, label_width),
@@ -102,7 +102,7 @@ defmodule Benchee.Formatters.Console.Reductions do
     ]
   end
 
-  defp scenario_reports(scenarios, units, label_width, hide_statistics) do
+  def scenario_reports(scenarios, units, label_width, hide_statistics) do
     Enum.map(scenarios, fn scenario ->
       format_scenario(scenario, units, label_width, hide_statistics)
     end)
@@ -111,9 +111,9 @@ defmodule Benchee.Formatters.Console.Reductions do
   @na "N/A"
 
   @spec format_scenario(Scenario.t(), unit_per_statistic, integer, boolean) :: String.t()
-  defp format_scenario(scenario, units, label_width, hide_statistics)
+  def format_scenario(scenario, units, label_width, hide_statistics)
 
-  defp format_scenario(
+  def format_scenario(
          scenario = %Scenario{reductions_data: %{statistics: %{sample_size: 0}}},
          _,
          label_width,
@@ -137,7 +137,7 @@ defmodule Benchee.Formatters.Console.Reductions do
     warning <> "\n" <> data
   end
 
-  defp format_scenario(scenario, %{reduction_count: reductions_unit}, label_width, false) do
+  def format_scenario(scenario, %{reduction_count: reductions_unit}, label_width, false) do
     %Scenario{
       name: name,
       reductions_data: %{
@@ -166,7 +166,7 @@ defmodule Benchee.Formatters.Console.Reductions do
     |> to_string
   end
 
-  defp format_scenario(scenario, %{reduction_count: reductions_unit}, label_width, true) do
+  def format_scenario(scenario, %{reduction_count: reductions_unit}, label_width, true) do
     %Scenario{
       name: name,
       reductions_data: %{
@@ -189,14 +189,14 @@ defmodule Benchee.Formatters.Console.Reductions do
   @spec comparison_report([Scenario.t()], unit_per_statistic, integer, map, boolean) :: [
           String.t()
         ]
-  defp comparison_report(scenarios, units, label_width, config, hide_statistics)
+  def comparison_report(scenarios, units, label_width, config, hide_statistics)
 
   # No need for a comparison when only one benchmark was run
-  defp comparison_report([_scenario], _, _, _, _), do: []
-  defp comparison_report(_, _, _, %{comparison: false}, _), do: []
-  defp comparison_report(_, _, _, _, true), do: []
+  def comparison_report([_scenario], _, _, _, _), do: []
+  def comparison_report(_, _, _, %{comparison: false}, _), do: []
+  def comparison_report(_, _, _, _, true), do: []
 
-  defp comparison_report([scenario | other_scenarios], units, label_width, _, _) do
+  def comparison_report([scenario | other_scenarios], units, label_width, _, _) do
     [
       Helpers.descriptor("Comparison"),
       reference_report(scenario, units, label_width)
@@ -204,7 +204,7 @@ defmodule Benchee.Formatters.Console.Reductions do
     ]
   end
 
-  defp reference_report(scenario, %{reduction_count: reductions_unit}, label_width) do
+  def reference_report(scenario, %{reduction_count: reductions_unit}, label_width) do
     %Scenario{name: name, reductions_data: %{statistics: %Statistics{median: median}}} = scenario
 
     count =
@@ -225,7 +225,7 @@ defmodule Benchee.Formatters.Console.Reductions do
   end
 
   @spec comparisons([Scenario.t()], unit_per_statistic, integer) :: [String.t()]
-  defp comparisons(scenarios_to_compare, units, label_width) do
+  def comparisons(scenarios_to_compare, units, label_width) do
     Enum.map(
       scenarios_to_compare,
       fn scenario ->
@@ -251,10 +251,10 @@ defmodule Benchee.Formatters.Console.Reductions do
     )
   end
 
-  defp extended_statistics_report(scenarios, units, label_width, config, hide_statistics)
-  defp extended_statistics_report(_, _, _, _, true), do: []
+  def extended_statistics_report(scenarios, units, label_width, config, hide_statistics)
+  def extended_statistics_report(_, _, _, _, true), do: []
 
-  defp extended_statistics_report(scenarios, units, label_width, %{extended_statistics: true}, _) do
+  def extended_statistics_report(scenarios, units, label_width, %{extended_statistics: true}, _) do
     [
       Helpers.descriptor("Extended statistics"),
       extended_column_descriptors(label_width)
@@ -262,9 +262,9 @@ defmodule Benchee.Formatters.Console.Reductions do
     ]
   end
 
-  defp extended_statistics_report(_, _, _, _, _), do: []
+  def extended_statistics_report(_, _, _, _, _), do: []
 
-  defp extended_column_descriptors(label_width) do
+  def extended_column_descriptors(label_width) do
     "\n~*s~*s~*s~*s~*s\n"
     |> :io_lib.format([
       -label_width,
@@ -281,13 +281,13 @@ defmodule Benchee.Formatters.Console.Reductions do
     |> to_string
   end
 
-  defp extended_statistics(scenarios, units, label_width) do
+  def extended_statistics(scenarios, units, label_width) do
     Enum.map(scenarios, fn scenario ->
       format_scenario_extended(scenario, units, label_width)
     end)
   end
 
-  defp format_scenario_extended(scenario, %{reduction_count: reductions_unit}, label_width) do
+  def format_scenario_extended(scenario, %{reduction_count: reductions_unit}, label_width) do
     %Scenario{
       name: name,
       reductions_data: %{

@@ -24,7 +24,7 @@ defmodule Benchee.Conversion.Format do
     "#{number_format(count)}#{separator}#{label}"
   end
 
-  defp number_format(count) do
+  def number_format(count) do
     count
     |> :erlang.float_to_list(decimals: float_precision(count))
     |> to_string
@@ -66,22 +66,22 @@ defmodule Benchee.Conversion.Format do
   @default_separator " "
   # should we need it again, a customer separator could be returned
   # per module here
-  defp separator do
+  def separator do
     @default_separator
   end
 
   # Returns the separator, or an empty string if there isn't a label
-  defp separator(label, _separator) when label == "" or label == nil, do: ""
-  defp separator(_label, separator), do: separator
+  def separator(label, _separator) when label == "" or label == nil, do: ""
+  def separator(_label, separator), do: separator
 
   # Fetches the label for the given unit
-  defp label(%Unit{label: label}) do
+  def label(%Unit{label: label}) do
     label
   end
 
-  defp float_precision(float) when trunc(float) == float, do: 0
-  defp float_precision(float) when float < 0.01, do: 5
-  defp float_precision(float) when float < 0.1, do: 4
-  defp float_precision(float) when float < 0.2, do: 3
-  defp float_precision(_float), do: 2
+  def float_precision(float) when trunc(float) == float, do: 0
+  def float_precision(float) when float < 0.01, do: 5
+  def float_precision(float) when float < 0.1, do: 4
+  def float_precision(float) when float < 0.2, do: 3
+  def float_precision(_float), do: 2
 end

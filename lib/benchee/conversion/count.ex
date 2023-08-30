@@ -79,7 +79,7 @@ defmodule Benchee.Conversion.Count do
   end
 
   # Helper function for returning a tuple of {value, unit}
-  defp scale_with_unit(count, unit) do
+  def scale_with_unit(count, unit) do
     {scale(count, unit), unit_for(unit)}
   end
 
